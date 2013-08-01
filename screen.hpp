@@ -13,6 +13,27 @@ class screen_base
 public:
     virtual ~screen_base() {};
     virtual void set_pixel(int x, int y, bool b) = 0;
+
+    virtual void set_pixel(int idx, bool v)
+    {
+        int row = idx / 5;
+        int col = idx % 5;
+        this->set_pixel(row,col,v);
+    }
+
+    virtual void direct(char c)
+    {
+        this->set_pixel(static_cast<int>(c)>>1,c&1);
+    }
+
+    virtual void direct(const char* c, int l)
+    {
+        for ( int i = 0; i < l; ++i )
+        {
+            direct(c[i]);
+        }
+    }
+
 }; // class screen_base
 
 class screens_impl
@@ -78,6 +99,41 @@ public:
     {
         set_pixel(static_cast<int>(c)>>1,c&1);
     }
+
+    void direct(char c)
+    {
+        bool b = c&1;
+        c >>= 1;
+        pixels_[static_cast<int>(c)] = b;
+        FOR_EACH(it, screens_)
+        {
+            (*it)->direct(c);
+        }
+    }
+
+    void direct(const char* c, int l)
+    {
+        for ( int i = 0; i < l; ++i )
+        {
+            char d = c[i];
+            bool b = d&1;
+            d >>= 1;
+            pixels_[static_cast<int>(d)] = b;
+            FOR_EACH(it, screens_)
+            {
+                (*it)->direct(c, l);
+            }
+        }
+    }
+
+    void invert()
+    {
+        for ( int i = 0; i < 25; ++i )
+        {
+            set_pixel(i,!pixels_[i]);
+        }
+    }
+
 
 }; // class screens_impl
 

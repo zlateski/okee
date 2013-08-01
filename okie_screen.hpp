@@ -47,6 +47,22 @@ public:
         }
     }
 
+    virtual void direct(char c)
+    {
+        if ( good_ )
+        {
+            s_.write(&c,1);
+        }
+    }
+
+    virtual void direct(const char* c, int l)
+    {
+        if ( good_ )
+        {
+            s_.write(c,l);
+        }
+    }
+
 }; // class okie_screen
 
 

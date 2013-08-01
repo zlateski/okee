@@ -16,8 +16,8 @@ namespace okie {
 class font_impl
 {
 private:
-    std::map<char, std::string>        font_    ;
-    std::map<char, std::vector<char> > commands_;
+    std::map<char, std::string> font_    ;
+    std::map<char, std::string> commands_;
 
 public:
     font_impl() : font_()
@@ -98,7 +98,7 @@ public:
             {
                 char d = c << 1;
                 if ( it->second[c] == '1' ) d |= 1;
-                commands_[it->first].push_back(d);
+                commands_[it->first] += (d);
             }
         }
 
@@ -112,10 +112,11 @@ public:
     {
         if ( commands_.count(c) )
         {
-            FOR_EACH( it, commands_[c] )
-            {
-                screens.command(*it);
-            }
+            screens.direct(commands_[c].c_str(), 25);
+            // FOR_EACH( it, commands_[c] )
+            // {
+            //     screens.direct(*it);
+            // }
         }
     }
 
@@ -164,6 +165,19 @@ public:
             this->putchar(' ');
             zi::this_thread::usleep(v);
             this->putchar(*it);
+            zi::this_thread::usleep(u);
+        }
+    }
+
+    void iblinkstring(const std::string& s, int u = 300000, int v = 100000)
+    {
+        FOR_EACH(it, s)
+        {
+            this->putchar(*it);
+            zi::this_thread::usleep(v);
+            screens.invert();
+            zi::this_thread::usleep(v);
+            screens.invert();
             zi::this_thread::usleep(u);
         }
     }
