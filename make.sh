@@ -1,0 +1,1 @@
+g++ -g main.cpp -I. -lncurses -Wall -O2 -lpthread -lrt -lserial
